@@ -6,7 +6,7 @@ import asyncHandler from "express-async-handler";
 import AppError from "../../libs/util/app-error.js";
 import tokenManager from "../../libs/util/mange-token.js";
 import sendSuccess from "../../libs/util/send-success-response.js";
-import UserModel from "../../models/user.schema.js";
+import UserModel from "../../models/user/user.schema.js";
 import HTTP_STATUS from "./../../libs/constants/http-status.constant.js";
 import sendEmail from "./../../libs/util/send-email.js";
 

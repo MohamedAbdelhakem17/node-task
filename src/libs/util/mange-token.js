@@ -52,8 +52,10 @@ class TokenManager {
     }
 
     try {
+      console.log("Wellcome");
       return jwt.verify(token, this._jwtSecret);
     } catch (err) {
+      console.log("error");
       const message =
         err && err.message ? err.message : "Token verification failed";
       const error = new Error(message);

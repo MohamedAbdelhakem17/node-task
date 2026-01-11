@@ -1,7 +1,7 @@
 import { check } from "express-validator";
 
 import AppError from "../../libs/util/app-error.js";
-import UserModel from "../../models/user.schema.js";
+import UserModel from "../../models/user/user.schema.js";
 import HTTP_STATUS from "../constants/http-status.constant.js";
 import validatorMiddleware from "./../../middlewares/validator.middleware.js";
 

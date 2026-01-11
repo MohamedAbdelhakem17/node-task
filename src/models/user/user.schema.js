@@ -32,6 +32,7 @@ const userSchema = new mongoose.Schema(
       select: false,
     },
 
+    profilePic: String,
     passwordResetCode: String,
     passwordResetExpires: Date,
     passwordResetVerified: Boolean,

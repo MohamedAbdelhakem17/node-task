@@ -8,7 +8,8 @@
  * }>}
  */
 const routes = [
-  { path: "/api/v1/auth", routerPath: "./auth-routes/auth.route.js" },
+  { path: "/api/v1/auth", routerPath: "./auth-route/auth.route.js" },
+  { path: "/api/v1/notes", routerPath: "./notes-route/notes.route.js" },
 ];
 
 /**
