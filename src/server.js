@@ -3,10 +3,12 @@ import path from "node:path";
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import { graphqlHTTP } from "express-graphql";
 import morgan from "morgan";
 
 import corsOptions from "./config/cors.js";
 import databaseConnect from "./config/database-connection.js";
+import { schema } from "./graphql/schema.js";
 import HTTP_STATUS from "./libs/constants/http-status.constant.js";
 import AppError from "./libs/util/app-error.js";
 import globalErrorHandler from "./middlewares/global-error.middlewares.js";
@@ -35,6 +37,23 @@ app.use(cors(corsOptions));
 
 // API  Routes
 await amountRoutes(app);
+
+// Graphql
+app.use(
+  "/graphql",
+  // protect,
+  cors({
+    origin: true,
+    credentials: true,
+  }),
+  graphqlHTTP(async (req) => {
+    return {
+      schema,
+      context: { user: req.user },
+      graphiql: true,
+    };
+  })
+);
 
 //  Not Found Handler
 app.use((req, res, next) => {

@@ -10,6 +10,7 @@
  * @param {import('express').NextFunction} next - Express next middleware function.
  */
 const globalErrorHandler = (error, req, res, next) => {
+  console.log(error);
   // Ensure the error contains standard status properties
   error.statusCode = error.statusCode || 500;
   error.statusText = error.statusText || "error";

@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 
 import HTTP_STATUS from "../libs/constants/http-status.constant.js";
 import tokenManager from "../libs/util/mange-token.js";
+import UserModel from "../models/user/user.schema.js";
 import AppError from "./../libs/util/app-error.js";
 
 const protect = asyncHandler(async (req, res, next) => {
