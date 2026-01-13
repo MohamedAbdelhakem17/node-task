@@ -12,6 +12,7 @@ import { schema } from "./graphql/schema.js";
 import HTTP_STATUS from "./libs/constants/http-status.constant.js";
 import AppError from "./libs/util/app-error.js";
 import globalErrorHandler from "./middlewares/global-error.middlewares.js";
+import protect from "./middlewares/protect.middleware.js";
 import amountRoutes from "./routes/index.js";
 
 // ====== Load Environment Variables ======
@@ -41,7 +42,7 @@ await amountRoutes(app);
 // Graphql
 app.use(
   "/graphql",
-  // protect,
+  protect,
   cors({
     origin: true,
     credentials: true,

@@ -1,6 +1,6 @@
-// schema.js
 import {
   GraphQLID,
+  GraphQLInt,
   GraphQLList,
   GraphQLObjectType,
   GraphQLSchema,
@@ -9,7 +9,7 @@ import {
 
 import { resolvers } from "./resolvers.js";
 
-// User Type
+/* =======================  User Type ======================= */
 const UserType = new GraphQLObjectType({
   name: "User",
   fields: () => ({
@@ -20,7 +20,7 @@ const UserType = new GraphQLObjectType({
   }),
 });
 
-// Note Type
+/* ======================= Note Type ======================= */
 const NoteType = new GraphQLObjectType({
   name: "Note",
   fields: () => ({
@@ -33,17 +33,46 @@ const NoteType = new GraphQLObjectType({
   }),
 });
 
-// Root Query
+/* ======================= Pagination Meta ====================== */
+const PaginationMetaType = new GraphQLObjectType({
+  name: "PaginationMeta",
+  fields: () => ({
+    page: { type: GraphQLInt },
+    limit: { type: GraphQLInt },
+    total: { type: GraphQLInt },
+    pages: { type: GraphQLInt },
+  }),
+});
+
+/* ======================= Notes Response ======================= */
+const NotesResponseType = new GraphQLObjectType({
+  name: "NotesResponse",
+  fields: () => ({
+    data: { type: new GraphQLList(NoteType) },
+    meta: { type: PaginationMetaType },
+  }),
+});
+
+/* ======================= Root Query ======================= */
 const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: {
     myNotes: {
-      type: new GraphQLList(NoteType),
+      type: NotesResponseType,
+      args: {
+        userId: { type: GraphQLID },
+        title: { type: GraphQLString },
+        from: { type: GraphQLString },
+        to: { type: GraphQLString },
+        page: { type: GraphQLInt },
+        limit: { type: GraphQLInt },
+      },
       resolve: resolvers.Query.myNotes,
     },
   },
 });
 
+/* ======================= Schema ======================= */
 export const schema = new GraphQLSchema({
   query: RootQuery,
 });
