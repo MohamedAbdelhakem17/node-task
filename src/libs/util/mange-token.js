@@ -9,8 +9,8 @@
 import jwt from "jsonwebtoken";
 
 class TokenManager {
-  constructor(secret) {
-    this._jwtSecret = secret || process.env.JWT_SECRET;
+  constructor(secret = "JWT_SECRET") {
+    this._jwtSecret = process.env.JWT_SECRET || secret;
   }
 
   /**

@@ -1,7 +1,12 @@
 import Crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import bcrypt from "bcryptjs";
 import asyncHandler from "express-async-handler";
+import sharp from "sharp";
+import { v4 as uuidv4 } from "uuid";
 
 import AppError from "../../libs/util/app-error.js";
 import tokenManager from "../../libs/util/mange-token.js";
@@ -9,6 +14,9 @@ import sendSuccess from "../../libs/util/send-success-response.js";
 import UserModel from "../../models/user/user.schema.js";
 import HTTP_STATUS from "./../../libs/constants/http-status.constant.js";
 import sendEmail from "./../../libs/util/send-email.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * @description Create a new user
@@ -204,4 +212,70 @@ const resetPassword = asyncHandler(async (req, res) => {
   });
 });
 
-export { createUser, forgotPassword, login, logout, resetPassword, verifyCode };
+/**
+ * @description Update the user's profile picture
+ * @route PATCH /api/v1/user/profile-pic
+ * @access Private
+ * @param {Object} req.user - Authenticated user object
+ * @param {string} req.user._id - ID of the authenticated user
+ * @param {Object} req.body - Request body
+ * @param {string} req.body.profilePic - URL or filename of the new profile picture
+ * @returns {Object} JSON response with updated user data
+ */
+const editProfilePic = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { profilePic } = req.body;
+
+  const user = await UserModel.findByIdAndUpdate(
+    userId,
+    { profilePic },
+    { new: true }
+  );
+
+  sendSuccess(res, {
+    statusCode: 200,
+    message: "Profile picture updated successfully",
+    data: user,
+  });
+});
+
+/**
+ * @description Handle user image upload and manipulation (resize & convert to jpeg)
+ * @middleware
+ * @param {Object} req.file - Uploaded file buffer from multer
+ * @param {Object} req.body - Request body where manipulated image filename will be added
+ * @param {Function} next - Express next middleware
+ * @returns {void} Calls next middleware after processing
+ */
+const userImageManipulation = asyncHandler(async (req, res, next) => {
+  const uploadDir = path.join(__dirname, "../../../uploads/images");
+
+  if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+  }
+
+  if (req.file) {
+    const userImage = `user-${uuidv4()}-${Date.now()}.jpeg`;
+
+    await sharp(req.file.buffer)
+      .resize(2000, 1333)
+      .toFormat("jpeg")
+      .jpeg({ quality: 90 })
+      .toFile(path.join(uploadDir, userImage));
+
+    req.body.profilePic = userImage;
+  }
+
+  next();
+});
+
+export {
+  createUser,
+  editProfilePic,
+  forgotPassword,
+  login,
+  logout,
+  resetPassword,
+  userImageManipulation,
+  verifyCode,
+};

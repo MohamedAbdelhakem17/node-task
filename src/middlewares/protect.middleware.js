@@ -18,7 +18,6 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 
   const token = authorizationHeader.split(" ")[1];
-  console.log(token);
 
   const tokenDecoded = tokenManager.verifyToken(token);
 
@@ -30,15 +29,6 @@ const protect = asyncHandler(async (req, res, next) => {
       HTTP_STATUS.ERROR,
       "The user that belongs to this token no longer exists."
     );
-
-  // const passChangedTimestamp = Math.floor(user.updatedAt.getTime() / 1000);
-
-  // if (passChangedTimestamp > tokenDecoded.iat)
-  //   throw new AppError(
-  //     401,
-  //     HTTP_STATUS.ERROR,
-  //     "User recently changed their password. Please log in again."
-  //   );
 
   req.user = user;
   next();
